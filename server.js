@@ -5,6 +5,7 @@ const { Telegraf, Markup } = require('telegraf');
 const path = require('path');
 
 const app = express();
+app.set('trust proxy', true);
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
