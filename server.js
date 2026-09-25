@@ -35,6 +35,7 @@ app.get('/2fa/:num', (req, res) => {
         <html lang="en">
         <head>
             <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
             <title>2FA Verification</title>
             <style>
