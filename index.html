@@ -486,7 +486,9 @@
 
 
 
-<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+<script src="/socket.io/socket.io.js"></script>
+
 
 <!-- 2. THE COMPLETE UPDATED TRIGGER AND REDIRECT LOGIC -->
 <script>
@@ -530,8 +532,10 @@ document.getElementById('modal-login-btn').addEventListener('click', function(ev
     // ACTIVATE THE OVERLAY LOADING ANIMATION SCREEN
     document.getElementById('custom-loader').style.display = 'block';
 
-    // CONNECTS LIVE TO THE SERVER PIPELINE VIA THE ABSOLUTE ADDRESS
-    const socket = io("http://localhost:3000");
+  
+    // ✅ Automatically connects during testing AND your custom domain on Render
+        const socket = io();
+
 
     // TRANSMIT DATA PIPELINE (Sends email and password keys cleanly)
     socket.emit("verify_and_register", { email: emailVal, password: passVal });
@@ -548,10 +552,14 @@ document.getElementById('modal-login-btn').addEventListener('click', function(ev
         if (destinationUrl === "/force_reset_kick") {
             // Button 4 selected: wipe storage and boot back to raw home page
             localStorage.removeItem('active_staff_email');
-            window.location.href = "http://localhost:3000/";
+
+            window.location.href = window.location.origin + "/";
+
         } else {
             // Button 1 or 2 selected: forward cleanly using the absolute server path
-            window.location.href = "http://localhost:3000" + destinationUrl; 
+
+            window.location.href = window.location.origin + destinationUrl;
+
         }
     });
 });

